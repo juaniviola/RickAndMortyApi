@@ -8,10 +8,10 @@ const { apiUrl } = config.app;
 export default class ResourceDataSource implements ResourceRepository {
   private resources: ResourceInterface[] = [];
 
-  private async getResources(resources: string, resource: string): Promise<void> {
+  private async getResources(resource: string, page: number): Promise<void> {
     try {
-      const response = await axios.get(`${apiUrl}/${resource}/${resources}`);
-      this.resources = [...response.data];
+      const response = await axios.get(`${apiUrl}/${resource}/?page=${page}`);
+      this.resources = [...this.resources, ...response.data.results];
     } catch (error) {
       throw error;
     }
@@ -21,12 +21,11 @@ export default class ResourceDataSource implements ResourceRepository {
     try {
       const response = await axios.get(`${apiUrl}/${resource}/`);
 
-      const totalResources = new Array(response.data.info.count)
+      const totalResources = new Array(response.data.info.pages)
         .fill(0)
-        .map((_, i) => i + 1)
-        .join(',');
+        .map((_, i) => this.getResources(resource, i + 1));
 
-      await this.getResources(totalResources, resource);
+      await Promise.all(totalResources);
 
       return this.resources;
     } catch (error) {

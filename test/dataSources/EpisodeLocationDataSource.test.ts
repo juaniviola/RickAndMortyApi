@@ -2,7 +2,7 @@ import EpisodeLocationDataSource from '../../src/dataSources/EpisodeDataSource';
 import EpisodeLocationResponse from '../../src/core/interactors/EpisodeLocations/EpisodeLocationResponse';
 
 // set timeout to 3s as maximum time allowed for the test
-jest.setTimeout(3000);
+jest.setTimeout(65000);
 
 describe('EpisodeLocationDataSource', () => {
   it('should return episode locations', async () => {
