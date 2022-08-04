@@ -11,8 +11,8 @@ afterAll(async () => {
   await server.stop();
 });
 
-// set timeout to 3s as maximum time allowed for the test
-jest.setTimeout(3000);
+// set timeout to 3.5s as maximum time allowed for the test
+jest.setTimeout(3500);
 
 describe('Episode Locations', () => {
   it('should return 200 status when get path /episodes_location. With body with props [results, in_time, time, exercise_name]', async () => {

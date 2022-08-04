@@ -1,7 +1,8 @@
 import ResourceInterface from '../../src/core/entities/Resource';
 import ResourcesDataSource from '../../src/dataSources/ResourceDataSource';
 
-jest.setTimeout(10000);
+// set timeout to 3s as maximum time allowed for the test
+jest.setTimeout(3000);
 
 describe('ResourcesDataSource', () => {
   it('should return episode resources', async () => {
