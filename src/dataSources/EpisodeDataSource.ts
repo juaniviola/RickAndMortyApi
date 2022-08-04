@@ -20,10 +20,10 @@ export default class EpisodeDataSource implements EpisodeRepository {
     });
   }
 
-  private async getEpisodes(resources: string): Promise<void> {
-    const response = await axios.get(`${apiUrl}/episode/${resources}`);
+  private async getEpisodes(page: number): Promise<void> {
+    const response = await axios.get(`${apiUrl}/episode/?page=${page}`);
 
-    response.data?.map(({ name, episode, characters }: EpisodeInterface) => {
+    response.data?.results?.map(({ name, episode, characters }: EpisodeInterface) => {
       this.episodes[episode] = characters;
       this.episodeNames[episode] = name;
 
@@ -37,14 +37,21 @@ export default class EpisodeDataSource implements EpisodeRepository {
 
   public async getAllAndCount(): Promise<EpisodeLocationResponse[]> {
     const response = await axios.get(`${apiUrl}/episode/`);
-    const episodesInfo = response.data.info;
+    const episodesInfo = response.data.info.pages;
 
-    await this.getEpisodes(
-      Array(episodesInfo.count).fill(0).map((_, i) => i + 1).join(','),
-    );
+    const totalPages = new Array(episodesInfo).fill(0).map((_, i) => this.getEpisodes(i + 1));
+    await Promise.all(totalPages);
 
-    const allCharacters = Array.from(new Set(Object.values(this.characters))).join(',');
-    await this.getCharacteres(allCharacters);
+    const allCharacters = Array.from(new Set(Object.values(this.characters)));
+    const chunkSize = 200;
+    const chunkedCharacters = [];
+    for (let i = 0; i < allCharacters.length; i += chunkSize) {
+      chunkedCharacters.push(
+        this.getCharacteres(allCharacters.slice(i, i + chunkSize).join(','))
+      );
+    }
+
+    await Promise.all(chunkedCharacters);
 
     Object.keys(this.episodes).map((episode: string) => {
       const episodeCharacters = this.episodes[episode];
