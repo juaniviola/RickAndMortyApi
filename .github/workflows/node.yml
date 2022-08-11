@@ -6,11 +6,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [14.x, 15.x]
+
+    services:
+      image: redis
+      options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v1
-
-      - name: Start all the environment
-        run: docker-compose up -d
-
-      - name: Run tests
-        run: docker exec rickandmortyapi npm run test
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install --force
+        run: |
+          npm install
+      - name: npm test
+        run: |
+          npm test
