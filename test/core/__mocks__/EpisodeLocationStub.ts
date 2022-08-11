@@ -1,6 +1,6 @@
-import EpisodeLocationResponse from '../../../src/core/interactors/EpisodeLocations/EpisodeLocationResponse';
+import { EpisodeRepositoryResponse } from '../../../src/core/repositories/EpisodesRepository';
 
-const stub: EpisodeLocationResponse = {
+const stub: EpisodeRepositoryResponse = {
   episodeNames: {
     'S01E01': 'Death Star',
     'S01E02': 'Death Star 2',

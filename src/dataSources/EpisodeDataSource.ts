@@ -1,7 +1,6 @@
 import axios from 'axios';
 import EpisodeInterface from '../core/entities/Episode';
-import EpisodeLocationResponse from '../core/interactors/EpisodeLocations/EpisodeLocationResponse';
-import EpisodeRepository from '../core/repositories/EpisodesRepository';
+import EpisodeRepository, { EpisodeRepositoryResponse } from '../core/repositories/EpisodesRepository';
 import config from '../config';
 
 const { apiUrl } = config.app;
@@ -11,7 +10,7 @@ export default class EpisodeDataSource implements EpisodeRepository {
   private episodes: any = {};
   private episodeNames: any = {};
 
-  public async getAll(): Promise<EpisodeLocationResponse> {
+  public async getAll(): Promise<EpisodeRepositoryResponse> {
     const response = await axios.get(`${apiUrl}/episode/`);
     const episodesInfo = response.data.info;
 
