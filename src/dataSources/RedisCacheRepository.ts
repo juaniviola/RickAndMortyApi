@@ -1,14 +1,11 @@
 import * as redis from 'redis';
 import CacheRepository from '../core/repositories/ChacheRepository';
-import config from '../config';
-
-const { redis: { host, port } } = config;
 
 class RedisCacheRepository implements CacheRepository {
   private redisClient: any;
 
   async connect(): Promise<void> {
-    const redisClient = redis.createClient({ socket: { host, port: parseInt(port, 10) } });
+    const redisClient = redis.createClient();
 
     // tslint:disable-next-line:no-console
     redisClient.on('error', (error: any) => console.error(`Redis error: ${error}`));
