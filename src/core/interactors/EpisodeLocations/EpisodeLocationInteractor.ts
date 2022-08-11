@@ -11,9 +11,32 @@ export default class EpisodeLocationInteractor {
     this.episodeRepository = episodeRepository;
   }
 
+  private async getAllAndCount(): Promise<any[]> {
+    const result: EpisodeLocationResponse = await this.episodeRepository.getAll();
+
+    if (!result) return [];
+
+    const { episodes, episodeNames, characters } = result;
+    const results: { [key: string]: {} } = {};
+    Object.keys(episodes).map((episode: string) => {
+      const episodeCharacters = episodes[episode];
+      const episodeCharacterNames = Array.from(
+        new Set(episodeCharacters.map((character: string) => characters[character])),
+      );
+
+      results[episode] = {
+        name: episodeNames[episode],
+        episode,
+        locations: [...episodeCharacterNames],
+      };
+    });
+
+    return Object.values(results);
+  }
+
   public async getLocationsEpisodesCharacters(): Promise<IResponse<EpisodeLocationResponse>> {
     const startTime = new Date().getTime();
-    const result: EpisodeLocationResponse[] = await this.episodeRepository.getAllAndCount();
+    const result: any[] = await this.getAllAndCount();
     const endTime = new Date().getTime();
 
     return {
