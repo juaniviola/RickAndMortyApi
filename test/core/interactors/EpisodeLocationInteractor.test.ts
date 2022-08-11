@@ -3,9 +3,7 @@ import episodeLocationResponse from './EpisodeLocationResponse';
 
 let episodeLocationInteractor: EpisodeLocationInteractor;
 let episodeRepository: any = {
-  getAllAndCount: jest.fn(),
-  getEpisodes: jest.fn(),
-  getCharacteres: jest.fn(),
+  getAll: jest.fn(),
 };
 
 beforeEach(() => {
@@ -15,7 +13,7 @@ beforeEach(() => {
 describe('EpisodeLocationInteractor', () => {
   it('should call getAll method of episodeRepository', async () => {
     await episodeLocationInteractor.getLocationsEpisodesCharacters();
-    expect(episodeRepository.getAllAndCount).toHaveBeenCalled();
+    expect(episodeRepository.getAll).toHaveBeenCalled();
   });
 
   it('should return Episode Location exercise response', async () => {

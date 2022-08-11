@@ -9,8 +9,10 @@ describe('EpisodeLocationDataSource', () => {
     const episodeQuantity = 51;
 
     const episodeLocationDataSource = new EpisodeLocationDataSource();
-    const response: EpisodeLocationResponse[] = await episodeLocationDataSource.getAllAndCount();
+    const response: EpisodeLocationResponse = await episodeLocationDataSource.getAll();
 
-    expect(response.length).toBe(episodeQuantity);
+    expect(Object.keys(response.episodeNames).length).toBe(episodeQuantity);
+    expect(Object.keys(response.episodes).length).toBe(episodeQuantity);
+    expect(Object.keys(response.characters).length).toBeGreaterThan(0);
   });
 });

@@ -13,14 +13,35 @@ export default class EpisodeLocationInteractor {
 
   public async getLocationsEpisodesCharacters(): Promise<IResponse<EpisodeLocationResponse>> {
     const startTime = new Date().getTime();
-    const result: EpisodeLocationResponse[] = await this.episodeRepository.getAllAndCount();
+    const results: any[] = await this.getAllAndMerge();
     const endTime = new Date().getTime();
 
     return {
       exercise_name: 'Episode locations',
       time: `${(endTime - startTime) / 10000} seconds`,
       in_time: (endTime - startTime) < MAXIMUM_TIME_TO_COUNT_CHARACTERS,
-      results: result,
+      results,
     };
+  }
+
+  private async getAllAndMerge(): Promise<any[]> {
+    const result = await this.episodeRepository.getAll();
+    if (!result) return [];
+
+    const { episodes, episodeNames, characters } = result;
+    const results: any = {};
+    Object.keys(episodes).forEach((episode: string) => {
+      const locations = Array.from(
+        new Set(episodes[episode].map((character: string) => characters[character]))
+      );
+
+      results[episode] = {
+        name: episodeNames[episode],
+        episode,
+        locations,
+      };
+    });
+
+    return Object.values(results);
   }
 }
