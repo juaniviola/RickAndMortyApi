@@ -9,19 +9,29 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x, 15.x]
+        redis-version: '5'
 
     services:
       image: redis
 
     steps:
       - uses: actions/checkout@v1
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: Setup Redis
+        uses: zhulik/redis-action@1.1.0
+        with:
+          redis version: ${{ matrix.redis-version }}
+          number of databases: 2
+
       - name: npm install --force
         run: |
           npm install
+
       - name: npm test
         run: |
           npm test
