@@ -9,5 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Run test with docker compose
-        run: docker-compose run api npm run test
+      - name: Start all the environment
+        run: docker-compose up -d
+
+      - name: Run tests
+        run: docker exec rickandmortyapi npm run test

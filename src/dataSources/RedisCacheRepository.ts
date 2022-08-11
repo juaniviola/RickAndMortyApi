@@ -8,7 +8,7 @@ class RedisCacheRepository implements CacheRepository {
   private redisClient: any;
 
   async connect(): Promise<void> {
-    const redisClient = redis.createClient({ socket: { host, port: parseInt(port) } });
+    const redisClient = redis.createClient({ socket: { host, port: parseInt(port, 10) } });
 
     // tslint:disable-next-line:no-console
     redisClient.on('error', (error: any) => console.error(`Redis error: ${error}`));
