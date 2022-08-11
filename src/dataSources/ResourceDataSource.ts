@@ -2,11 +2,17 @@ import axios from 'axios';
 import ResourceInterface from '../core/entities/Resource';
 import ResourceRepository from '../core/repositories/ResourceRepository';
 import config from '../config';
+import CacheRepository from '../core/repositories/ChacheRepository';
 
 const { apiUrl } = config.app;
 
 export default class ResourceDataSource implements ResourceRepository {
+  private cacheRepository: CacheRepository;
   private resources: ResourceInterface[] = [];
+
+  constructor(cacheRepository: CacheRepository) {
+    this.cacheRepository = cacheRepository;
+  }
 
   public async getAll(resource: string): Promise<ResourceInterface[]> {
     try {
@@ -17,9 +23,17 @@ export default class ResourceDataSource implements ResourceRepository {
         .map((_, i) => i + 1)
         .join(',');
 
+      const dataFromCache = await this.cacheRepository.get(`${resource}/${totalResources}`);
+      if (dataFromCache) {
+        return dataFromCache;
+      }
+
       await this.getResources(totalResources, resource);
 
-      return this.resources;
+      const { resources } = this;
+      await this.cacheRepository.set(`${resource}/${totalResources}`, resources);
+
+      return resources;
     } catch (error) {
       throw error;
     }
